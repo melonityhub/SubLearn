@@ -27,7 +27,7 @@ def emit(title: str, lines: list[str]) -> None:
 
 
 def lint_lines() -> list[str]:
-    out: list[str] = []
+    grouped: dict[tuple[str, str], list] = {}
     for path in sorted(glob.glob("**/build/reports/lint-results-*.xml", recursive=True)):
         try:
             root = ET.parse(path).getroot()
@@ -39,8 +39,11 @@ def lint_lines() -> list[str]:
             location = issue.find("location")
             file_name = ((location.get("file") if location is not None else "") or "").replace(WORKSPACE, "")
             line = location.get("line") if location is not None else "?"
-            out.append(f"{issue.get('id')}: {issue.get('message')} [{file_name}:{line}]")
-    return out
+            key = (issue.get("id") or "?", file_name)
+            entry = grouped.setdefault(key, [0, issue.get("message") or "", line])
+            entry[0] += 1
+    return [f"{rule} x{count} in {file}: {message[:160]} (first line {first})"
+            for (rule, file), (count, message, first) in sorted(grouped.items())]
 
 
 def junit_lines() -> list[str]:

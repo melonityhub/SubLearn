@@ -33,6 +33,7 @@ import kotlinx.coroutines.launch
  * Media3 / ExoPlayer implementation of [PlayerController] (ENG-1). Must be created and used on the
  * main thread. Audio focus and becoming-noisy handling come from ExoPlayer; PiP lives in the UI layer.
  */
+@OptIn(UnstableApi::class)
 class Media3PlayerController(
     context: Context,
     private val scope: CoroutineScope,

@@ -51,9 +51,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
 import com.melonityhub.sublearn.core.data.repo.RecentVideosRepository
 import com.melonityhub.sublearn.core.design.ComingSoonBadge
@@ -67,7 +67,7 @@ import com.melonityhub.sublearn.feature.settings.SettingsScreen
 import com.melonityhub.sublearn.feature.words.MyWordsScreen
 import com.melonityhub.sublearn.feature.words.MyWordsViewModel
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.koinInject
+import org.koin.compose.koinInject
 import org.koin.androidx.compose.koinViewModel
 
 private const val ROUTE_MAIN = "main"

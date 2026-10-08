@@ -17,7 +17,7 @@ import com.melonityhub.sublearn.core.model.MediaSource
 import com.melonityhub.sublearn.core.settings.AppSettings
 import com.melonityhub.sublearn.core.settings.SettingsStore
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.koin.androidx.compose.koinInject
+import org.koin.compose.koinInject
 
 /**
  * The single activity. It opens straight into the player for `ACTION_VIEW` video files and links (APP-1),

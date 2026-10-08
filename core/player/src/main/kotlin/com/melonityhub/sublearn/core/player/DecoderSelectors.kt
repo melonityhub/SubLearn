@@ -14,6 +14,7 @@ import com.melonityhub.sublearn.core.settings.DecoderMode
  * - HW: only hardware-accelerated codecs; if none exist the player reports an error instead of hiding it.
  * - HW_PLUS: hardware codecs first, then software codecs as a fallback.
  */
+@OptIn(UnstableApi::class)
 object DecoderSelectors {
     fun forMode(mode: DecoderMode): MediaCodecSelector = MediaCodecSelector { mimeType, requiresSecure, requiresTunneling ->
         val all = MediaCodecUtil.getDecoderInfos(mimeType, requiresSecure, requiresTunneling)
