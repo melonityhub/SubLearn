@@ -94,3 +94,21 @@ requires. Each one can be revisited by a later PR that updates this file.
   phase, once the license file is vendored. ASSUMPTION.
 - **D-030 Stretch scope.** The brief's scope switch is respected: no LATER item is implemented before NOW
   is green.
+
+## Additions made during the build (phase 0–1)
+
+- **D-031 Build verification by annotations.** Failing CI runs are summarised as check-run annotations by
+  `.github/scripts/report_failures.py` because raw log downloads are not always available. *ASSUMPTION*
+- **D-032 Explicit project paths.** Modules use `project(":core:model")` instead of type-safe accessors. The
+  accessors did not resolve in this layout, and the explicit form is equally standard. *ASSUMPTION*
+- **D-033 Pinned UI stack.** Compose BOM 2026.06.01 and Activity 1.11.0, the versions the reference project builds
+  with on AGP 9.3.2 / compileSdk 36. Newer BOM/Activity releases raised the AAR minCompileSdk check. *ASSUMPTION*
+- **D-034 Tap counting.** One tap = word, two = line, three or more = block, in a 320 ms window. *ASSUMPTION*
+- **D-035 Shadowing tap and hold.** Tap runs a repeat session with the configured count (default 2). Hold runs
+  auto-repeat until tapped again. *ASSUMPTION*
+- **D-036 Learning-level default-known set.** Manual level A1/A2 treats the authored core function words as known;
+  B1 and above use only user marks (`CoreWordLevelProvider`). *ASSUMPTION*, see AR-003.
+- **D-037 Release signing.** Release APKs use the debug signing config until a release keystore is owned by the
+  maintainer (D-025 extended). *ASSUMPTION*
+- **D-038 Honest controls.** A setting or button is shown as working only when the code applies it. Otherwise it is
+  labelled "pending" in Settings and listed in KNOWN_ISSUES.
