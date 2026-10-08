@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <string name="player_back">بازگشت</string>
+  <string name="player_close">بستن</string>
+  <string name="player_subtitle_list">فهرست زیرنویس</string>
+  <string name="player_subtitles_load">زیرنویس</string>
+  <string name="player_pip">تصویر در تصویر</string>
+  <string name="player_lock">قفل چرخش</string>
+  <string name="player_unlock">باز کردن قفل چرخش</string>
+  <string name="player_decoder_sw">نرم‌افزاری</string>
+  <string name="player_decoder_hw">سخت‌افزاری</string>
+  <string name="player_decoder_hw_plus">سخت‌افزاری+</string>
+  <string name="player_learning_layer">زیرنویس یادگیری</string>
+  <string name="player_translation_layer">زیرنویس ترجمه</string>
+  <string name="player_repeat">تکرار بلوک (نگه دارید برای تکرار خودکار)</string>
+  <string name="player_stop_at_block_end">توقف در پایان بلوک</string>
+  <string name="player_prev_block">بلوک قبلی</string>
+  <string name="player_next_block">بلوک بعدی</string>
+  <string name="player_play">پخش</string>
+  <string name="player_pause">مکث</string>
+  <string name="player_speed_normal">۱x</string>
+  <string name="player_translation_loading">در حال ترجمه…</string>
+  <string name="player_save_word">ذخیره واژه</string>
+  <string name="player_details">جزئیات</string>
+  <string name="player_list_title">فهرست زیرنویس</string>
+  <string name="player_no_spoiler">بدون spoiler (نگه دارید)</string>
+  <string name="player_list_empty">برای دیدن فهرست، یک زیرنویس یادگیری بارگذاری کنید.</string>
+  <string name="player_subtitle_formats">پشتیبانی‌شده: SRT، WebVTT، ASS/SSA (متنی).</string>
+  <string name="player_load_learning">بارگذاری زیرنویس یادگیری</string>
+  <string name="player_load_translation">بارگذاری زیرنویس ترجمه</string>
+  <string name="player_clear_learning">حذف زیرنویس یادگیری</string>
+  <string name="player_clear_translation">حذف زیرنویس ترجمه</string>
+</resources>

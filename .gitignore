@@ -1,0 +1,32 @@
+# Gradle / Android build outputs
+.gradle/
+build/
+**/build/
+.kotlin/
+captures/
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+
+# Local machine files (never commit)
+local.properties
+*.iml
+.idea/
+.vscode/
+.DS_Store
+
+# Signing material (never commit)
+*.jks
+*.keystore
+keystore.properties
+google-services.json
+
+# Logs and generated reports
+*.log
+hs_err_pid*
+replay_pid*
+
+# Agent scratch space
+.arena/

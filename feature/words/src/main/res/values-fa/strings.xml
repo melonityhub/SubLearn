@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <string name="my_words_title">واژه‌های من</string>
+  <string name="my_words_search">جستجوی واژه</string>
+  <string name="my_words_empty">هنوز واژه‌ای ذخیره نشده است. روی یک واژه در زیرنویس بزنید و ذخیره کنید.</string>
+</resources>
