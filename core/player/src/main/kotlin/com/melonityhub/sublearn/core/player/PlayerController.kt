@@ -2,6 +2,7 @@ package com.melonityhub.sublearn.core.player
 
 import com.melonityhub.sublearn.core.model.MediaSource
 import com.melonityhub.sublearn.core.settings.DecoderMode
+import androidx.media3.common.Player
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -11,6 +12,9 @@ import kotlinx.coroutines.flow.StateFlow
 interface PlayerController {
     val state: StateFlow<PlaybackState>
     val tracks: StateFlow<TrackList>
+
+    /** The Media3 player used by the video surface. Null for test doubles. */
+    val mediaPlayer: Player?
 
     /** Text of the embedded (container) subtitle track currently on screen, or empty. */
     val embeddedText: StateFlow<String>

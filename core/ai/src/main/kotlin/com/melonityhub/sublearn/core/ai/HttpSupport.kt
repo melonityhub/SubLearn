@@ -25,7 +25,7 @@ internal suspend fun OkHttpClient.executeForJson(request: Request): JsonElement 
         throw AiException.Network(e)
     }
     response.use { r ->
-        val body = r.body.string()
+        val body = r.body?.string().orEmpty()
         if (!r.isSuccessful) throw AiException.Http(r.code, errorMessageOf(body))
         try {
             parser.parseToJsonElement(body)

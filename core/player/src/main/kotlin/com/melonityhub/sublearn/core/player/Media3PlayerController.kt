@@ -35,20 +35,25 @@ class Media3PlayerController(
     initialDecoderMode: DecoderMode,
 ) : PlayerController {
 
+    private val appContext = context.applicationContext
     private var decoderMode = initialDecoderMode
-    private val player: ExoPlayer = buildPlayer(context, decoderMode)
+    private var player: ExoPlayer = buildPlayer(appContext, decoderMode)
     private val _state = MutableStateFlow(PlaybackState())
     private val _tracks = MutableStateFlow(TrackList())
     private val _embeddedText = MutableStateFlow("")
     private var pollJob: Job? = null
-    private var currentTitle: String = ""
 
     override val state: StateFlow<PlaybackState> = _state.asStateFlow()
     override val tracks: StateFlow<TrackList> = _tracks.asStateFlow()
     override val embeddedText: StateFlow<String> = _embeddedText.asStateFlow()
+    override val mediaPlayer: Player get() = player
 
     init {
-        player.addListener(object : Player.Listener {
+        attachListener(player)
+    }
+
+    private fun attachListener(target: ExoPlayer) {
+        target.addListener(object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) = publish()
             override fun onIsPlayingChanged(isPlaying: Boolean) {
                 publish()
@@ -71,7 +76,6 @@ class Media3PlayerController(
     }
 
     override fun load(source: MediaSource, startPositionMs: Long, playWhenReady: Boolean) {
-        currentTitle = source.title
         _embeddedText.value = ""
         _state.value = PlaybackState(hasMedia = true, positionMs = startPositionMs)
         val item = MediaItem.Builder()
@@ -97,13 +101,20 @@ class Media3PlayerController(
     override fun setDecoderMode(mode: DecoderMode) {
         if (mode == decoderMode) return
         decoderMode = mode
+        // Codec selection is fixed when renderers are created, so the player is rebuilt at the same position.
         val position = player.currentPosition
         val playWhenReady = player.playWhenReady
-        val item = player.currentMediaItem ?: return
-        // Codec selection is fixed when the renderers are created, so the player is rebuilt at the same position.
-        player.setMediaItem(item, position)
-        player.prepare()
-        player.playWhenReady = playWhenReady
+        val item = player.currentMediaItem
+        pollJob?.cancel()
+        player.release()
+        player = buildPlayer(appContext, mode)
+        attachListener(player)
+        if (item != null) {
+            player.setMediaItem(item, position)
+            player.prepare()
+            player.playWhenReady = playWhenReady
+        }
+        publish()
     }
 
     override fun selectAudioTrack(trackId: String?) = selectTrack(C.TRACK_TYPE_AUDIO, trackId)

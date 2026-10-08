@@ -17,6 +17,7 @@ class FakePlayerController(initial: PlaybackState = PlaybackState()) : PlayerCon
 
     override val state: StateFlow<PlaybackState> = _state.asStateFlow()
     override val tracks: StateFlow<TrackList> = _tracks.asStateFlow()
+    override val mediaPlayer: androidx.media3.common.Player? = null
     override val embeddedText: StateFlow<String> = _embedded.asStateFlow()
 
     val calls = mutableListOf<String>()
