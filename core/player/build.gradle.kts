@@ -17,4 +17,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     testImplementation(libs.robolectric)
     testImplementation(libs.kotlinx.coroutines.test)
+    // Test fixtures do not inherit the main source set's implementation dependencies.
+    testFixturesImplementation(project(":core:settings"))
+    testFixturesImplementation(libs.kotlinx.coroutines.core)
 }

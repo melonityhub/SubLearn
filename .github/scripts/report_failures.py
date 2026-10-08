@@ -42,11 +42,19 @@ def report_gradle(path: str) -> None:
     except OSError:
         emit("Gradle log missing", path)
         return
-    markers = ("What went wrong", "e: ", "w: ", "> Task", "FAILED", "Exception", "Caused by", "error:", "ERROR")
-    important = [line for line in lines if any(marker in line for marker in markers)]
-    if important:
-        emit("Gradle errors", "\n".join(important[-80:]))
-    emit("Gradle log tail", "\n".join(lines[-60:]))
+    summary = [line for line in lines if "tests completed" in line or "BUILD " in line or "FAILED" in line]
+    compile_errors = [line for line in lines if line.startswith("e: ")]
+    what_went_wrong = []
+    for index, line in enumerate(lines):
+        if "What went wrong" in line:
+            what_went_wrong = lines[index:index + 25]
+    chunks = [("Build summary", summary), ("Compile errors", compile_errors), ("What went wrong", what_went_wrong)]
+    for title, block in chunks:
+        if not block:
+            continue
+        for start in range(0, len(block), 25):
+            emit(title, "\n".join(block[start:start + 25]))
+    emit("Gradle log tail", "\n".join(lines[-40:]))
 
 
 def main() -> int:
