@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    api(projects.core.model)
+    api(project(":core:model"))
     implementation(libs.okhttp)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.coroutines.core)

@@ -10,8 +10,8 @@ android {
 }
 
 dependencies {
-    api(projects.core.model)
-    implementation(projects.core.settings)
+    api(project(":core:model"))
+    implementation(project(":core:settings"))
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.common)
     implementation(libs.kotlinx.coroutines.android)

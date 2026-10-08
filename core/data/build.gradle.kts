@@ -8,8 +8,8 @@ android {
 }
 
 dependencies {
-    api(projects.core.settings)
-    api(projects.core.model)
+    api(project(":core:settings"))
+    api(project(":core:model"))
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)

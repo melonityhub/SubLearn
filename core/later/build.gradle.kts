@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    api(projects.core.model)
+    api(project(":core:model"))
 }
