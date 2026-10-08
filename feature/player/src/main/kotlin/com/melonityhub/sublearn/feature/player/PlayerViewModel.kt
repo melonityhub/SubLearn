@@ -85,6 +85,7 @@ class PlayerViewModel(
             isPlaying = state.isPlaying,
             isBuffering = state.isBuffering,
             hasMedia = state.hasMedia,
+            speed = state.speed,
             errorMessage = state.errorMessage,
             learningLine = learningLine,
             translationLine = translationLine,

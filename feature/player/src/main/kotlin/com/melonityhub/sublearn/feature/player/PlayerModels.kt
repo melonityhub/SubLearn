@@ -67,6 +67,7 @@ data class PlayerUi(
     val isPlaying: Boolean = false,
     val isBuffering: Boolean = false,
     val hasMedia: Boolean = false,
+    val speed: Float = 1f,
     val errorMessage: String? = null,
     val learningLine: SubtitleLine? = null,
     val translationLine: SubtitleLine? = null,

@@ -330,7 +330,7 @@ fun PlayerScreen(
                     onNextBlock = { viewModel.seekToBlock(1) },
                     onPlayPause = viewModel::togglePlay,
                     onSeek = viewModel::seekTo,
-                    onSpeed = { speed -> viewModel.setSpeed(speed) },
+                    onSpeed = { viewModel.setSpeed(nextSpeed(ui.speed)) },
                     modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth().padding(SublearnTokens.SpaceM),
                 )
             }
@@ -726,8 +726,8 @@ private fun BottomControls(
             IconButton(onClick = onNextBlock) {
                 Icon(Icons.Filled.SkipNext, contentDescription = stringResource(R.string.player_next_block), tint = Color.White)
             }
-            TextButton(onClick = { onSpeed(if (ui.isBuffering) 1f else 1f) }) {
-                Text(stringResource(R.string.player_speed_normal), color = Color.White)
+            TextButton(onClick = onSpeed) {
+                Text(speedLabel(ui.speed), color = Color.White)
             }
         }
     }
@@ -735,6 +735,15 @@ private fun BottomControls(
 
 private fun Modifier.size56(): Modifier = this.width(56.dp).height(56.dp)
 
+private val PLAYBACK_SPEEDS = listOf(0.75f, 1f, 1.25f, 1.5f, 2f)
+
+/** Cycles through the speeds offered in the player (PLY-3 speed control). */
+internal fun nextSpeed(current: Float): Float {
+    val index = PLAYBACK_SPEEDS.indexOfFirst { abs(it - current) < 0.01f }
+    return PLAYBACK_SPEEDS[(index + 1) % PLAYBACK_SPEEDS.size]
+}
+
+private fun speedLabel(speed: Float): String = "${speed.toString().removeSuffix(".0")}x"
 @Composable
 private fun TranslationCard(
     popup: TranslationPopup,
