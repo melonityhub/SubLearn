@@ -37,4 +37,23 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
 
       - name: Run unit tests
-        run: ./gradlew test --stacktrace --continue
+        shell: bash
+        run: |
+          set -o pipefail
+          ./gradlew test --stacktrace --continue 2>&1 | tee gradle-test.log
+
+      - name: Report failures as annotations
+        if: failure()
+        run: python3 .github/scripts/report_failures.py gradle-test.log
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            **/build/reports/tests/
+            **/build/test-results/
+            gradle-test.log
+          if-no-files-found: ignore
+          retention-days: 7
