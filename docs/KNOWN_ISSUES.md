@@ -49,6 +49,10 @@ Items are grouped by spec area. Each item says what is missing and where the wor
   offline dictionary is LATER-3.
 - **Minimum API 31.** Older Android versions are not supported (D-004).
 
+## Build pins
+
+- navigation-compose 2.8.9 and AppCompat 1.7.1 are pinned because newer releases need compileSdk 37 (AR-010, D-041).
+
 ## Verification gaps
 
 - No device run has been recorded yet. All verification so far is through CI (unit tests, lint and build).

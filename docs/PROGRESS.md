@@ -3,11 +3,19 @@
 _Last updated: 2026-10-08 (session on branch `arena/9fe4f214-sublearn`). The live status of every spec ID is in
 [CHECKLIST.md](CHECKLIST.md)._
 
+## Verified state (CI record)
+
+- **Last green run:** `Android CI` run 37748839267 on commit `5892504` (branch `arena/9fe4f214-sublearn`):
+  Gradle wrapper validated; `./gradlew test lint assembleDebug` succeeded; artifact `sublearn-debug-apk` (≈50 MB)
+  and `test-reports` uploaded. Unit tests cover the JVM modules (subtitle, settings, model, AI providers),
+  Robolectric Room/FTS tests for My Words, and the translation cache.
+- Not yet verified on a device; see the device checklist below.
+
 ## State at a glance
 
 - **Phase 0 (foundations): done.** Gradle multi-module build, version catalog, convention plugins, CI (tests,
   lint, debug APK artifact), release workflow, docs set, licence audit, reference study.
-- **Phase 1 (app shell): mostly done.** Navigation, tabs, side menu, intents, Home with recents, settings with
+- **Phase 1 (app shell): mostly done (CI green).** Navigation, tabs, side menu, intents, Home with recents, settings with
   JSON export and import, My Words screen.
 - **Phase 2 (player core): mostly done.** Media3 player, MX-style overlay, gestures, orientation and lock, PiP,
   decoder mapping. Device checks pending.
