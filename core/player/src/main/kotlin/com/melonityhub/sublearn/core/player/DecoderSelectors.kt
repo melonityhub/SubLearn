@@ -1,5 +1,9 @@
+@file:OptIn(UnstableApi::class)
+
 package com.melonityhub.sublearn.core.player
 
+
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.mediacodec.MediaCodecSelector
 import androidx.media3.exoplayer.mediacodec.MediaCodecUtil
 import com.melonityhub.sublearn.core.settings.DecoderMode

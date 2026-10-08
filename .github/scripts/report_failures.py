@@ -1,66 +1,33 @@
 #!/usr/bin/env python3
-"""Turns Gradle and JUnit failures into GitHub error annotations.
+"""Turns Gradle, compiler, lint and JUnit failures into GitHub error annotations.
 
-Raw job logs are not always downloadable, but check-run annotations are. Running this after a
-failed step makes the important lines readable through the API (see docs/PROGRESS.md, "How CI
-failures are read").
+Raw job logs are not always downloadable, but check-run annotations are, so a failed step writes its
+key findings there. GitHub keeps at most 10 error annotations per step, so this script emits at most
+five annotations, each holding a block of lines (see docs/PROGRESS.md, "How CI results are read").
 """
 import glob
 import sys
 import xml.etree.ElementTree as ET
+
+MAX_CHARS = 7000
+WORKSPACE = "/home/runner/work/SubLearn/SubLearn/"
 
 
 def escape(text: str) -> str:
     return text.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
 
 
-def emit(title: str, message: str) -> None:
-    print(f"::error title={title}::{escape(message[:6000])}")
-
-
-def report_junit(limit: int = 30) -> int:
-    emitted = 0
-    for path in sorted(glob.glob("**/build/test-results/**/*.xml", recursive=True)):
-        try:
-            root = ET.parse(path).getroot()
-        except ET.ParseError:
-            continue
-        for case in root.iter("testcase"):
-            for failure in list(case.findall("failure")) + list(case.findall("error")):
-                emitted += 1
-                name = f"{case.get('classname')}.{case.get('name')}"
-                body = (failure.get("message") or "")[:800] + "\n" + (failure.text or "")[:2500]
-                emit("Test failed", f"{name}\n{body}")
-                if emitted >= limit:
-                    return emitted
-    return emitted
-
-
-def report_gradle(path: str) -> None:
-    try:
-        lines = open(path, encoding="utf-8", errors="replace").read().splitlines()
-    except OSError:
-        emit("Gradle log missing", path)
+def emit(title: str, lines: list[str]) -> None:
+    if not lines:
         return
-    summary = [line for line in lines if "tests completed" in line or "BUILD " in line or "FAILED" in line]
-    compile_errors = [line for line in lines if line.startswith("e: ")]
-    what_went_wrong = []
-    for index, line in enumerate(lines):
-        if "What went wrong" in line:
-            what_went_wrong.extend(lines[index:index + 40])
-    chunks = [("Build summary", summary), ("Compile errors", compile_errors), ("What went wrong", what_went_wrong)]
-    for title, block in chunks:
-        if not block:
-            continue
-        for start in range(0, len(block), 25):
-            emit(title, "\n".join(block[start:start + 25]))
-    emit("Gradle log tail", "\n".join(lines[-40:]))
+    message = "\n".join(lines)
+    if len(message) > MAX_CHARS:
+        message = message[:MAX_CHARS] + "\n… (truncated)"
+    print(f"::error title={title}::{escape(message)}")
 
 
-def report_lint(limit: int = 40) -> int:
-    """Emits every Error-severity lint issue as an annotation with its file and line."""
-    emitted = 0
-    workspace = "/home/runner/work/SubLearn/SubLearn/"
+def lint_lines() -> list[str]:
+    out: list[str] = []
     for path in sorted(glob.glob("**/build/reports/lint-results-*.xml", recursive=True)):
         try:
             root = ET.parse(path).getroot()
@@ -70,23 +37,54 @@ def report_lint(limit: int = 40) -> int:
             if issue.get("severity") not in ("Error", "Fatal"):
                 continue
             location = issue.find("location")
-            file_name = (location.get("file") if location is not None else "") or ""
-            file_name = file_name.replace(workspace, "")
-            line = location.get("line") if location is not None else None
-            text = f"{issue.get('id')}: {issue.get('message')} ({file_name}:{line})"
-            print(f"::error file={file_name},line={line or 1},title=Lint {issue.get('id')}::{escape(text[:900])}")
-            emitted += 1
-            if emitted >= limit:
-                return emitted
-    return emitted
+            file_name = ((location.get("file") if location is not None else "") or "").replace(WORKSPACE, "")
+            line = location.get("line") if location is not None else "?"
+            out.append(f"{issue.get('id')}: {issue.get('message')} [{file_name}:{line}]")
+    return out
+
+
+def junit_lines() -> list[str]:
+    out: list[str] = []
+    for path in sorted(glob.glob("**/build/test-results/**/*.xml", recursive=True)):
+        try:
+            root = ET.parse(path).getroot()
+        except ET.ParseError:
+            continue
+        for case in root.iter("testcase"):
+            for failure in list(case.findall("failure")) + list(case.findall("error")):
+                name = f"{case.get('classname')}.{case.get('name')}"
+                message = (failure.get("message") or "")[:300]
+                out.append(f"TEST {name}: {message}")
+    return out
+
+
+def gradle_lines(path: str) -> tuple[list[str], list[str], list[str], list[str]]:
+    try:
+        lines = open(path, encoding="utf-8", errors="replace").read().splitlines()
+    except OSError:
+        return [], [], [], [f"missing log: {path}"]
+    summary = [l for l in lines if "tests completed" in l or l.startswith("BUILD ") or " FAILED" in l]
+    compile_errors = [l for l in lines if l.startswith("e: ") or l.startswith("w: file") and "error" in l.lower()]
+    went_wrong: list[str] = []
+    for index, line in enumerate(lines):
+        if "What went wrong" in line:
+            went_wrong.extend(l for l in lines[index + 1:index + 12] if l.strip())
+    tail = [l for l in lines[-25:] if l.strip()]
+    return summary, compile_errors, went_wrong, tail
 
 
 def main() -> int:
-    lint_count = report_lint()
-    junit_count = report_junit()
-    if len(sys.argv) > 1:
-        report_gradle(sys.argv[1])
-    print(f"reported {lint_count} lint error(s) and {junit_count} failing test case(s)")
+    log = sys.argv[1] if len(sys.argv) > 1 else None
+    summary, compile_errors, went_wrong, tail = gradle_lines(log) if log else ([], [], [], [])
+    lint = lint_lines()
+    tests = junit_lines()
+    emit("Lint errors", lint)
+    emit("Compile errors", compile_errors)
+    emit("Test failures", tests)
+    emit("Build summary and what went wrong", summary + went_wrong)
+    if not (lint or compile_errors or tests or went_wrong):
+        emit("Log tail", tail)
+    print(f"reported {len(lint)} lint error(s), {len(compile_errors)} compile error(s), {len(tests)} failing test(s)")
     return 0
 
 

@@ -1,5 +1,9 @@
+@file:OptIn(UnstableApi::class)
+
 package com.melonityhub.sublearn.core.player
 
+
+import androidx.media3.common.util.UnstableApi
 import android.content.Context
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
