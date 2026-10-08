@@ -10,6 +10,11 @@ android {
     }
 }
 
+lint {
+    // Media3 codec and renderer APIs are @UnstableApi. They are used on purpose (decoder modes, see DECISIONS D-012).
+    warning.add("UnsafeOptInUsageError")
+}
+
 dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:settings"))

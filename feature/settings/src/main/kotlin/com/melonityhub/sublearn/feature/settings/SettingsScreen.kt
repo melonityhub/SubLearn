@@ -75,7 +75,7 @@ fun SettingsScreen(onBack: () -> Unit) {
     val viewModel: SettingsViewModel = koinViewModel()
     val settings by viewModel.settings.collectAsState()
     var query by remember { mutableStateOf("") }
-    val context = androidx.compose.ui.platform.LocalContext.current
+    val labels = SettingsCategory.entries.associateWith { stringResource(it.labelRes) }
     var open by remember { mutableStateOf<SettingsCategory?>(null) }
     Scaffold(
         topBar = {
@@ -101,7 +101,7 @@ fun SettingsScreen(onBack: () -> Unit) {
                 )
                 val filtered = SettingsCategory.entries.filter {
                     query.isBlank() || it.keywords.contains(query.trim(), ignoreCase = true) ||
-                        context.getString(it.labelRes).contains(query.trim(), ignoreCase = true)
+                        labels.getValue(it).contains(query.trim(), ignoreCase = true)
                 }
                 Column(modifier = Modifier.fillMaxSize()) {
                     filtered.forEach { item ->
@@ -136,9 +136,8 @@ fun SettingsScreen(onBack: () -> Unit) {
 
 @Composable
 private fun AppearanceSection(settings: AppSettings, vm: SettingsViewModel) {
-    val context = androidx.compose.ui.platform.LocalContext.current
     SectionTitle(R.string.cat_appearance)
-    ChoiceRow(R.string.theme_label, ThemeMode.entries, settings.appearance.themeMode, { context.themeLabel(it) }) { mode ->
+    ChoiceRow(R.string.theme_label, ThemeMode.entries, settings.appearance.themeMode, { themeLabel(it) }) { mode ->
         vm.update { it.copy(appearance = it.appearance.copy(themeMode = mode)) }
     }
     ChoiceRow(R.string.ui_language_label, UiLanguage.entries, settings.appearance.uiLanguage, { languageLabel(it) }) { lang ->
@@ -151,12 +150,11 @@ private fun AppearanceSection(settings: AppSettings, vm: SettingsViewModel) {
 
 @Composable
 private fun PlayerSection(settings: AppSettings, vm: SettingsViewModel) {
-    val context = androidx.compose.ui.platform.LocalContext.current
     SectionTitle(R.string.cat_player)
-    ChoiceRow(R.string.decoder_label, DecoderMode.entries, settings.player.decoderMode, { context.decoderLabel(it) }) { mode ->
+    ChoiceRow(R.string.decoder_label, DecoderMode.entries, settings.player.decoderMode, { decoderLabel(it) }) { mode ->
         vm.update { it.copy(player = it.player.copy(decoderMode = mode)) }
     }
-    ChoiceRow(R.string.double_tap_label, DoubleTapAction.entries, settings.player.doubleTapAction, { context.doubleTapLabel(it) }) { action ->
+    ChoiceRow(R.string.double_tap_label, DoubleTapAction.entries, settings.player.doubleTapAction, { doubleTapLabel(it) }) { action ->
         vm.update { it.copy(player = it.player.copy(doubleTapAction = action)) }
     }
     SliderRow(R.string.seek_step_label, settings.player.seekStepSeconds.toFloat(), 1f..60f, "${settings.player.seekStepSeconds} s") { value ->
@@ -178,7 +176,6 @@ private fun PlayerSection(settings: AppSettings, vm: SettingsViewModel) {
 
 @Composable
 private fun SubtitleSection(settings: AppSettings, vm: SettingsViewModel) {
-    val context = androidx.compose.ui.platform.LocalContext.current
     SectionTitle(R.string.cat_subtitles)
     SliderRow(R.string.opacity_learning, settings.subtitles.learningLayer.opacityPercent.toFloat(), 0f..100f, "${settings.subtitles.learningLayer.opacityPercent}%") { value ->
         vm.update { it.copy(subtitles = it.subtitles.copy(learningLayer = it.subtitles.learningLayer.copy(opacityPercent = value.toInt()))) }
@@ -202,7 +199,6 @@ private fun SubtitleSection(settings: AppSettings, vm: SettingsViewModel) {
 
 @Composable
 private fun FontSection(settings: AppSettings, vm: SettingsViewModel) {
-    val context = androidx.compose.ui.platform.LocalContext.current
     SectionTitle(R.string.cat_fonts)
     Text(stringResource(R.string.fonts_pending_note), style = MaterialTheme.typography.bodySmall)
     WIRED_FONT_SURFACES.forEach { surface ->
@@ -213,7 +209,7 @@ private fun FontSection(settings: AppSettings, vm: SettingsViewModel) {
                 if (role == LanguageRole.LEARNING) R.string.role_learning else R.string.role_native,
                 FontFamilyChoice.entries,
                 style.family,
-                { context.familyLabel(it) },
+                { familyLabel(it) },
             ) { family ->
                 vm.update { it.copy(fonts = it.fonts.withStyle(surface, role, style.copy(family = family))) }
             }
@@ -227,7 +223,6 @@ private fun FontSection(settings: AppSettings, vm: SettingsViewModel) {
 
 @Composable
 private fun ShadowingSection(settings: AppSettings, vm: SettingsViewModel) {
-    val context = androidx.compose.ui.platform.LocalContext.current
     SectionTitle(R.string.cat_shadowing)
     SliderRow(R.string.repeat_count_label, settings.shadowing.repeatCount.toFloat(), -1f..10f, if (settings.shadowing.repeatCount < 0) "auto" else "${settings.shadowing.repeatCount}") { value ->
         vm.update { it.copy(shadowing = it.shadowing.copy(repeatCount = value.toInt())) }
@@ -256,10 +251,9 @@ private fun ShadowingSection(settings: AppSettings, vm: SettingsViewModel) {
 
 @Composable
 private fun LearningSection(settings: AppSettings, vm: SettingsViewModel) {
-    val context = androidx.compose.ui.platform.LocalContext.current
     SectionTitle(R.string.cat_learning)
     Text(stringResource(R.string.learning_pending_note), style = MaterialTheme.typography.bodySmall)
-    ChoiceRow(R.string.mode_label, LearningMode.entries, settings.learning.mode, { context.modeLabel(it) }) { mode ->
+    ChoiceRow(R.string.mode_label, LearningMode.entries, settings.learning.mode, { modeLabel(it) }) { mode ->
         vm.update { it.copy(learning = it.learning.copy(mode = mode)) }
     }
     ChoiceRow(R.string.level_label, CefrLevel.entries.toList(), CefrLevel.fromName(settings.learning.manualLevel) ?: CefrLevel.B1, { it.name }) { level ->
@@ -272,7 +266,6 @@ private fun LearningSection(settings: AppSettings, vm: SettingsViewModel) {
 
 @Composable
 private fun AiSection(settings: AppSettings, vm: SettingsViewModel) {
-    val context = androidx.compose.ui.platform.LocalContext.current
     val status by vm.keyStatus.collectAsState()
     SectionTitle(R.string.cat_ai)
     ChoiceRow(R.string.ai_provider_label, AiProviderId.entries, settings.ai.provider, { providerLabel(it) }) { provider ->
@@ -324,7 +317,6 @@ private fun KeyRow(provider: AiProviderId, saved: Boolean, onSave: (String) -> U
 
 @Composable
 private fun DictionarySection(settings: AppSettings, vm: SettingsViewModel) {
-    val context = androidx.compose.ui.platform.LocalContext.current
     SectionTitle(R.string.cat_dictionary)
     Text(stringResource(R.string.dictionary_google_note), style = MaterialTheme.typography.bodyMedium)
     FilterChip(
@@ -343,14 +335,13 @@ private fun DictionarySection(settings: AppSettings, vm: SettingsViewModel) {
 @Composable
 private fun AboutSection(vm: SettingsViewModel) {
     val message by vm.message.collectAsState()
-    val context = androidx.compose.ui.platform.LocalContext.current
     val exportLauncher = androidx.activity.compose.rememberLauncherForActivityResult(
         androidx.activity.result.contract.ActivityResultContracts.CreateDocument("application/json"),
     ) { uri ->
         if (uri != null) {
             val json = vm.exportJson()
             context.contentResolver.openOutputStream(uri)?.use { it.write(json.toByteArray(Charsets.UTF_8)) }
-            vm.showMessage(context.getString(R.string.export_done))
+            vm.showMessage(exportDone)
         }
     }
     val importLauncher = androidx.activity.compose.rememberLauncherForActivityResult(
@@ -358,7 +349,7 @@ private fun AboutSection(vm: SettingsViewModel) {
     ) { uri ->
         if (uri != null) {
             val text = context.contentResolver.openInputStream(uri)?.use { it.readBytes().toString(Charsets.UTF_8) }
-            if (text != null) vm.importJson(text) else vm.showMessage(context.getString(R.string.import_failed))
+            if (text != null) vm.importJson(text) else vm.showMessage(importFailed)
         }
     }
     SectionTitle(R.string.cat_about)
@@ -390,7 +381,7 @@ private fun SectionTitle(res: Int) {
 }
 
 @Composable
-private fun <T> ChoiceRow(labelRes: Int, options: List<T>, selected: T, label: (T) -> String, onSelect: (T) -> Unit) {
+private fun <T> ChoiceRow(labelRes: Int, options: List<T>, selected: T, label: @Composable (T) -> String, onSelect: (T) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(SublearnTokens.SpaceXs)) {
         Text(stringResource(labelRes), style = MaterialTheme.typography.labelLarge)
         Row(horizontalArrangement = Arrangement.spacedBy(SublearnTokens.SpaceXs)) {
@@ -424,7 +415,8 @@ private fun SliderRow(labelRes: Int, value: Float, range: ClosedFloatingPointRan
     }
 }
 
-private fun Context.themeLabel(mode: ThemeMode): String = getString(
+@Composable
+private fun themeLabel(mode: ThemeMode): String = stringResource(
     when (mode) {
         ThemeMode.SYSTEM -> R.string.theme_system
         ThemeMode.LIGHT -> R.string.theme_light
@@ -435,7 +427,8 @@ private fun Context.themeLabel(mode: ThemeMode): String = getString(
 
 private fun languageLabel(lang: UiLanguage): String = if (lang == UiLanguage.PERSIAN) "فارسی" else "English"
 
-private fun Context.decoderLabel(mode: DecoderMode): String = getString(
+@Composable
+private fun decoderLabel(mode: DecoderMode): String = stringResource(
     when (mode) {
         DecoderMode.SW -> R.string.player_decoder_sw
         DecoderMode.HW -> R.string.player_decoder_hw
@@ -443,11 +436,13 @@ private fun Context.decoderLabel(mode: DecoderMode): String = getString(
     },
 )
 
-private fun Context.doubleTapLabel(action: DoubleTapAction): String = getString(
+@Composable
+private fun doubleTapLabel(action: DoubleTapAction): String = stringResource(
     if (action == DoubleTapAction.PAUSE) R.string.double_tap_pause else R.string.double_tap_seek,
 )
 
-private fun Context.modeLabel(mode: LearningMode): String = getString(
+@Composable
+private fun modeLabel(mode: LearningMode): String = stringResource(
     if (mode == LearningMode.ENTERTAINMENT) R.string.mode_entertainment else R.string.mode_learning,
 )
 
@@ -457,7 +452,8 @@ private fun providerLabel(provider: AiProviderId): String = when (provider) {
     AiProviderId.ANTHROPIC -> "Claude (Anthropic)"
 }
 
-private fun Context.familyLabel(family: FontFamilyChoice): String = getString(
+@Composable
+private fun familyLabel(family: FontFamilyChoice): String = stringResource(
     when (family) {
         FontFamilyChoice.SYSTEM -> R.string.font_system
         FontFamilyChoice.SANS_SERIF -> R.string.font_sans
