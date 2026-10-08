@@ -335,6 +335,9 @@ private fun DictionarySection(settings: AppSettings, vm: SettingsViewModel) {
 @Composable
 private fun AboutSection(vm: SettingsViewModel) {
     val message by vm.message.collectAsState()
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val exportDone = stringResource(R.string.export_done)
+    val importFailed = stringResource(R.string.import_failed)
     val exportLauncher = androidx.activity.compose.rememberLauncherForActivityResult(
         androidx.activity.result.contract.ActivityResultContracts.CreateDocument("application/json"),
     ) { uri ->

@@ -112,3 +112,10 @@ requires. Each one can be revisited by a later PR that updates this file.
   maintainer (D-025 extended). *ASSUMPTION*
 - **D-038 Honest controls.** A setting or button is shown as working only when the code applies it. Otherwise it is
   labelled "pending" in Settings and listed in KNOWN_ISSUES.
+- **D-039 Media3 unstable APIs.** Media3 codec and renderer APIs (`MediaCodecUtil`, `MediaCodecSelector`, the renderers
+  factory) are `@UnstableApi`. The decoder modes need them, so they are used on purpose with declaration-level opt-in.
+  Lint's `UnsafeOptInUsageError` is a warning in `core:player` and `feature:player` (visible, not build-breaking). *ASSUMPTION*
+- **D-040 CI annotation limit.** GitHub keeps at most 10 error annotations per step, so `report_failures.py` writes at
+  most five annotations per step (lint grouped by rule and file, compile errors, test failures, build summary). *Fact*, verified in CI.
+- **D-041 Pinned AndroidX versions for compileSdk 36.** navigation-compose 2.8.9 and AppCompat 1.7.1 are pinned; newer
+  releases declare a higher minimum compile SDK and fail `checkAarMetadata`. Reassess when compileSdk moves to 37. *ASSUMPTION*
