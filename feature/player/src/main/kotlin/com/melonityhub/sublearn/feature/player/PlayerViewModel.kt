@@ -33,7 +33,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -115,8 +116,8 @@ class PlayerViewModel(
         viewModelScope.launch { recents.touch(source) }
         viewModelScope.launch { openMedia() }
         viewModelScope.launch {
-            settings.map { it.player.decoderMode }.distinctUntilChangedBy { it }.collect { mode ->
-                if (player.state.value.hasMedia) player.setDecoderMode(mode)
+            settings.map { it.player.decoderMode }.distinctUntilChanged().drop(1).collect { mode ->
+                player.setDecoderMode(mode)
             }
         }
         viewModelScope.launch { player.state.collect { onPlaybackChanged(it) } }
@@ -124,6 +125,9 @@ class PlayerViewModel(
 
     private suspend fun openMedia() {
         val current = settingsStore.settings.first()
+        // Codec selection is applied before loading: the Media3 controller rebuilds its player if the mode differs.
+        player.setDecoderMode(current.player.decoderMode)
+        overlay.value = overlay.value.copy(stopAtBlockEnd = current.shadowing.stopAtBlockEnd)
         val snapshot = playbackStates.load(source.uri)
         val start = if (current.player.resumeFromLastPosition) snapshot?.positionMs ?: 0L else 0L
         player.load(source, start, playWhenReady = true)

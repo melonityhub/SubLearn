@@ -128,6 +128,8 @@ fun PlayerScreen(
     onBack: () -> Unit,
     onOpenDetails: (String) -> Unit,
 ) {
+    @Suppress("UNUSED_VARIABLE")
+    val unused = Unit
     val viewModel: PlayerViewModel = koinViewModel(parameters = { parametersOf(source, controller) })
     val ui by viewModel.ui.collectAsState()
     val settings by viewModel.settings.collectAsState()
@@ -191,7 +193,14 @@ fun PlayerScreen(
                     subtitleView?.visibility = View.GONE
                 }
             },
-            update = { view -> view.player = controller.mediaPlayer },
+            update = { view ->
+                view.player = controller.mediaPlayer
+                view.resizeMode = when (settings.player.aspectMode) {
+                    com.melonityhub.sublearn.core.settings.AspectMode.FILL -> AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+                    com.melonityhub.sublearn.core.settings.AspectMode.STRETCH -> AspectRatioFrameLayout.RESIZE_MODE_FILL
+                    else -> AspectRatioFrameLayout.RESIZE_MODE_FIT
+                }
+            },
         )
 
         // 2. Gesture layer (PLY-4). Sits under subtitles and buttons, which take their taps first.
