@@ -44,15 +44,24 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
 
-      - name: Run unit tests
+      - name: Run unit tests, lint and build the debug APK
         shell: bash
         run: |
           set -o pipefail
-          ./gradlew test --stacktrace --continue 2>&1 | tee gradle-test.log
+          ./gradlew test lint assembleDebug --stacktrace --continue 2>&1 | tee gradle-test.log
 
       - name: Report failures as annotations
         if: failure()
         run: python3 .github/scripts/report_failures.py gradle-test.log
+
+      - name: Upload debug APK
+        if: success()
+        uses: actions/upload-artifact@v6
+        with:
+          name: sublearn-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          retention-days: 30
 
       - name: Upload test reports
         if: always()

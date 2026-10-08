@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <string name="app_name">ساب‌لرن</string>
+  <string name="nav_home">خانه</string>
+  <string name="nav_youtube">یوتیوب</string>
+  <string name="nav_learn">یادگیری</string>
+  <string name="nav_dictionary">دیکشنری</string>
+  <string name="menu_open">منو</string>
+  <string name="menu_level">سطح</string>
+  <string name="menu_my_words">واژه‌های من</string>
+  <string name="menu_quiz">آزمون</string>
+  <string name="menu_updates">بررسی به‌روزرسانی</string>
+  <string name="menu_settings">تنظیمات</string>
+  <string name="coming_soon_badge">به‌زودی</string>
+  <string name="coming_soon_youtube">تماشای ویدیوهای یوتیوب با دو زیرنویس. برای نسخه بعدی برنامه‌ریزی شده است.</string>
+  <string name="coming_soon_learn">خواندن PDF، صفحه‌ها و تصویرها با کمک یادگیری. برای نسخه بعدی برنامه‌ریزی شده است.</string>
+  <string name="coming_soon_dictionary">دیکشنری کامل با وارد کردن آفلاین. برای نسخه بعدی برنامه‌ریزی شده است.</string>
+  <string name="coming_soon_quiz">آزمون از فهرست واژه‌های من. بعد از نسخه اصلی برنامه‌ریزی شده است.</string>
+  <string name="coming_soon_updates">بررسی به‌روزرسانی از طریق GitHub Releases. بعد از نسخه اصلی برنامه‌ریزی شده است.</string>
+  <string name="coming_soon_level">تشخیص خودکار سطح برنامه‌ریزی شده است. سطح را در تنظیمات ← یادگیری تعیین کنید.</string>
+  <string name="url_dialog_title">باز کردن نشانی ویدیو</string>
+  <string name="url_dialog_hint">https://…</string>
+  <string name="url_invalid">یک نشانی http یا https به فایل ویدیو وارد کنید</string>
+  <string name="cancel">لغو</string>
+  <string name="open">باز کردن</string>
+  <string name="unlisted_title">ویدیو</string>
+</resources>

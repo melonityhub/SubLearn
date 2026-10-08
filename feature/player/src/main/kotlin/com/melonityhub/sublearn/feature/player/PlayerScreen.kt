@@ -128,8 +128,6 @@ fun PlayerScreen(
     onBack: () -> Unit,
     onOpenDetails: (String) -> Unit,
 ) {
-    @Suppress("UNUSED_VARIABLE")
-    val unused = Unit
     val viewModel: PlayerViewModel = koinViewModel(parameters = { parametersOf(source, controller) })
     val ui by viewModel.ui.collectAsState()
     val settings by viewModel.settings.collectAsState()

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- AppCompat base so per-app language switching works on Android 12. Compose draws the real theme. -->
+    <style name="Theme.SubLearn" parent="Theme.AppCompat.DayNight.NoActionBar" />
+</resources>

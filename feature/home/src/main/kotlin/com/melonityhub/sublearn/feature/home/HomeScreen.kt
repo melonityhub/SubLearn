@@ -27,6 +27,7 @@ import com.melonityhub.sublearn.core.design.SublearnTokens
 import com.melonityhub.sublearn.core.model.MediaSource
 import kotlinx.coroutines.flow.Flow
 import androidx.compose.ui.res.stringResource
+import com.melonityhub.sublearn.feature.home.R
 
 /**
  * Home (APP-2): open a local video or a URL, and resume recent videos. Only real data is shown:

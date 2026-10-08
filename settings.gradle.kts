@@ -17,14 +17,23 @@ dependencyResolutionManagement {
 
 rootProject.name = "SubLearn"
 
-// Pure JVM core (fast unit tests, no Android dependency). Android modules are added in the next phase commit.
+include(":app")
+
+// Pure JVM core (fast unit tests, no Android dependency).
 include(":core:model")
 include(":core:subtitle")
 include(":core:settings")
 include(":core:later")
 include(":core:ai")
 
-// Android core (Room, DataStore, Keystore, Media3, Compose design tokens).
+// Android core: design tokens, Room/DataStore/Keystore, Media3 player, ML Kit translation.
 include(":core:design")
 include(":core:data")
 include(":core:player")
+include(":core:translation")
+
+// Feature modules (Compose UI).
+include(":feature:home")
+include(":feature:words")
+include(":feature:player")
+include(":feature:settings")
