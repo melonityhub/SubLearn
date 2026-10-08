@@ -5,8 +5,9 @@ plugins {
 group = "com.melonityhub.sublearn.buildlogic"
 
 dependencies {
-    compileOnly(libs.android.gradle.plugin)
-    compileOnly(libs.kotlin.gradle.plugin)
+    // implementation (not compileOnly): the convention plugins apply these plugins by id at runtime.
+    implementation(libs.android.gradle.plugin)
+    implementation(libs.kotlin.gradle.plugin)
 }
 
 gradlePlugin {
