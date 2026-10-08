@@ -23,3 +23,8 @@ include(":core:subtitle")
 include(":core:settings")
 include(":core:later")
 include(":core:ai")
+
+// Android core (Room, DataStore, Keystore, Media3, Compose design tokens).
+include(":core:design")
+include(":core:data")
+include(":core:player")

@@ -24,7 +24,7 @@ object SettingsCodec {
     /** One migration per source version: step N turns a version-N document into version N+1. */
     private val migrations: Map<Int, (JsonObject) -> JsonObject> = mapOf(
         // 0 = documents exported before schemaVersion existed (none shipped, kept for the mechanism).
-        0 to { obj -> JsonObject(obj + ("schemaVersion" to JsonPrimitive(1))) },
+        0 to { obj: JsonObject -> JsonObject(obj + ("schemaVersion" to JsonPrimitive(1))) },
     )
 
     fun encode(settings: AppSettings): String =
