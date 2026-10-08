@@ -57,11 +57,36 @@ def report_gradle(path: str) -> None:
     emit("Gradle log tail", "\n".join(lines[-40:]))
 
 
+def report_lint(limit: int = 40) -> int:
+    """Emits every Error-severity lint issue as an annotation with its file and line."""
+    emitted = 0
+    workspace = "/home/runner/work/SubLearn/SubLearn/"
+    for path in sorted(glob.glob("**/build/reports/lint-results-*.xml", recursive=True)):
+        try:
+            root = ET.parse(path).getroot()
+        except ET.ParseError:
+            continue
+        for issue in root.iter("issue"):
+            if issue.get("severity") not in ("Error", "Fatal"):
+                continue
+            location = issue.find("location")
+            file_name = (location.get("file") if location is not None else "") or ""
+            file_name = file_name.replace(workspace, "")
+            line = location.get("line") if location is not None else None
+            text = f"{issue.get('id')}: {issue.get('message')} ({file_name}:{line})"
+            print(f"::error file={file_name},line={line or 1},title=Lint {issue.get('id')}::{escape(text[:900])}")
+            emitted += 1
+            if emitted >= limit:
+                return emitted
+    return emitted
+
+
 def main() -> int:
+    lint_count = report_lint()
     junit_count = report_junit()
     if len(sys.argv) > 1:
         report_gradle(sys.argv[1])
-    print(f"reported {junit_count} failing test case(s)")
+    print(f"reported {lint_count} lint error(s) and {junit_count} failing test case(s)")
     return 0
 
 

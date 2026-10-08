@@ -687,7 +687,7 @@ private fun BottomControls(
     onNextBlock: () -> Unit,
     onPlayPause: () -> Unit,
     onSeek: (Long) -> Unit,
-    onSpeed: (Float) -> Unit,
+    onSpeed: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val duration = ui.durationMs.coerceAtLeast(1L)
@@ -858,7 +858,6 @@ private fun SubtitleSourceSheet(
     }
 }
 
-@Composable
 private fun displayNameOf(uri: Uri): String = uri.lastPathSegment?.substringAfterLast('/') ?: "subtitle"
 
 private fun formatTime(ms: Long): String {
