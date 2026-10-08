@@ -37,7 +37,7 @@ class OpenAiProvider(
             .header("Authorization", "Bearer ${request.apiKey}")
             .post(payload.toString().toRequestBody(JSON_MEDIA_TYPE))
             .build()
-        val root = client.executeForJson(httpRequest).jsonObject
+        val root = client.executeForJson(httpRequest)
         val content = root["choices"]?.jsonArray?.firstOrNull()?.jsonObject?.get("message")?.jsonObject
             ?.get("content")?.jsonPrimitive?.content?.trim()
             ?: throw AiException.BadResponse("no choices")

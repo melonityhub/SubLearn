@@ -44,7 +44,7 @@ class GeminiProvider(
             .header("x-goog-api-key", request.apiKey)
             .post(payload.toString().toRequestBody(JSON_MEDIA_TYPE))
             .build()
-        val root = client.executeForJson(httpRequest).jsonObject
+        val root = client.executeForJson(httpRequest)
         val parts = root["candidates"]?.jsonArray?.firstOrNull()?.jsonObject?.get("content")?.jsonObject?.get("parts")
             ?.jsonArray ?: throw AiException.BadResponse("no candidates")
         val text = parts.joinToString("") { part -> part.jsonObject["text"]?.jsonPrimitive?.content.orEmpty() }.trim()

@@ -47,7 +47,7 @@ def report_gradle(path: str) -> None:
     what_went_wrong = []
     for index, line in enumerate(lines):
         if "What went wrong" in line:
-            what_went_wrong.extend(lines[index:index + 8])
+            what_went_wrong.extend(lines[index:index + 40])
     chunks = [("Build summary", summary), ("Compile errors", compile_errors), ("What went wrong", what_went_wrong)]
     for title, block in chunks:
         if not block:

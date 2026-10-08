@@ -20,4 +20,5 @@ dependencies {
     // Test fixtures do not inherit the main source set's implementation dependencies.
     testFixturesImplementation(project(":core:settings"))
     testFixturesImplementation(libs.kotlinx.coroutines.core)
+    testFixturesImplementation(libs.androidx.media3.common)
 }

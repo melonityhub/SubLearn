@@ -3,7 +3,6 @@ package com.melonityhub.sublearn.core.ai
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
@@ -18,7 +17,7 @@ internal val JSON_MEDIA_TYPE = "application/json; charset=utf-8".toMediaType()
 private val parser = Json { ignoreUnknownKeys = true }
 
 /** Sends [request] off the main thread and returns the parsed JSON body or a typed [AiException]. */
-internal suspend fun OkHttpClient.executeForJson(request: Request): JsonElement = withContext(Dispatchers.IO) {
+internal suspend fun OkHttpClient.executeForJson(request: Request): JsonObject = withContext(Dispatchers.IO) {
     val response = try {
         newCall(request).execute()
     } catch (e: IOException) {
@@ -27,11 +26,12 @@ internal suspend fun OkHttpClient.executeForJson(request: Request): JsonElement 
     response.use { r ->
         val body = r.body?.string().orEmpty()
         if (!r.isSuccessful) throw AiException.Http(r.code, errorMessageOf(body))
-        try {
+        val element = try {
             parser.parseToJsonElement(body)
         } catch (e: Exception) {
             throw AiException.BadResponse("body is not JSON (${e.javaClass.simpleName})")
         }
+        element as? JsonObject ?: throw AiException.BadResponse("body is not a JSON object")
     }
 }
 

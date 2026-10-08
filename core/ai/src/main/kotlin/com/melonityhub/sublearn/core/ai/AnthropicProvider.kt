@@ -40,7 +40,7 @@ class AnthropicProvider(
             .header("anthropic-version", ANTHROPIC_VERSION)
             .post(payload.toString().toRequestBody(JSON_MEDIA_TYPE))
             .build()
-        val root = client.executeForJson(httpRequest).jsonObject
+        val root = client.executeForJson(httpRequest)
         val blocks = root["content"]?.jsonArray ?: JsonArray(emptyList())
         val text = blocks
             .mapNotNull { block -> block.jsonObject.takeIf { it["type"]?.jsonPrimitive?.content == "text" } }
